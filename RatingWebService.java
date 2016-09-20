@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 public class RatingWebService {
 
-	public String getRating(String merchantName, String location)
+	public String getRating(String merchantName)
 	{
 		try
 		{
@@ -21,10 +21,15 @@ public class RatingWebService {
 
 	        SQLiteDataSource dataSource = new SQLiteDataSource();
 	        dataSource.setUrl("jdbc:sqlite:"+RunService.databaseName);
-			ResultSet rs = dataSource.getConnection().createStatement().executeQuery( "select RATING from merchant_rating where merch_name = \'" + merchantName + "\' AND location = \'" + location + "\'" );
+			ResultSet rs = dataSource.getConnection().createStatement().executeQuery( "select * from Merchant_rating where MerchantName = \'" + merchantName.toUpperCase() + "\'" );
 			if(rs.next())
 			{
-				return ""+rs.getDouble("RATING");
+				String output = "<SalesCount>" + rs.getInt("SalesCount") + "</SalesCount>\n";
+				output = output + "<ChargebacksCount>" + rs.getInt("ChargebacksCount") + "</ChargebacksCount>\n";
+				output = output + "<RefundsCount>" + rs.getInt("RefundsCount") + "</RefundsCount>\n";
+				output = output + "<RepresentmentsCount>" + rs.getInt("RepresentmentsCount") + "</RepresentmentsCount>\n";
+				output = output + "<Score>" + rs.getDouble("Score") + "</Score>\n";
+				return output;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
